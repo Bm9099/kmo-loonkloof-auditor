@@ -80,7 +80,7 @@ export function PdfExport({ result }: PdfExportProps) {
 
       autoTable(doc, {
         startY: y + 4,
-        head: [['Functiegroep', 'M', 'V', 'Gem. M', 'Gem. V', 'Kloof', 'Status']],
+        head: [['Functiegroep', 'M', 'V', 'Gem. Bruto M', 'Gem. Bruto V', 'Kloof', 'Status']],
         body: rows,
         theme: 'striped',
         headStyles: { fillColor: [30, 64, 175], textColor: 255, fontSize: 8 },
