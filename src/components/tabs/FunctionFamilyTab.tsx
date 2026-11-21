@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { FunctionGroup } from '@/lib/types';
@@ -12,22 +12,25 @@ interface FunctionFamilyTabProps {
 function StatusBadge({ status }: { status: FunctionGroup['status'] }) {
   if (status === 'conform') {
     return (
-      <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-50">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
         Conform &lt;5%
-      </Badge>
+      </span>
     );
   }
   if (status === 'actie_vereist') {
     return (
-      <Badge className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-50">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">
+        <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
         Actie Vereist &gt;5%
-      </Badge>
+      </span>
     );
   }
   return (
-    <Badge className="bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-50">
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
       Onvoldoende Data
-    </Badge>
+    </span>
   );
 }
 
@@ -47,18 +50,17 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
             <th className="text-left py-3 px-3 font-semibold text-slate-600">Functiegroep</th>
             <th className="text-center py-3 px-3 font-semibold text-slate-600">#M</th>
             <th className="text-center py-3 px-3 font-semibold text-slate-600">#V</th>
-            <th className="text-right py-3 px-3 font-semibold text-slate-600">Gem. M</th>
-            <th className="text-right py-3 px-3 font-semibold text-slate-600">Gem. V</th>
+            <th className="text-right py-3 px-3 font-semibold text-slate-600">Gem. Bruto M</th>
+            <th className="text-right py-3 px-3 font-semibold text-slate-600">Gem. Bruto V</th>
             <th className="text-right py-3 px-3 font-semibold text-slate-600">Kloof %</th>
             <th className="text-left py-3 px-3 font-semibold text-slate-600">Status</th>
           </tr>
         </thead>
         <tbody>
-          {groups.map((g) => (
-            <>
+          {groups.map((g, idx) => (
+            <React.Fragment key={g.naam}>
               <tr
-                key={g.naam}
-                className="border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
+                className={`border-b border-slate-100 cursor-pointer transition-colors ${idx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60'}`}
                 onClick={() => setExpanded(expanded === g.naam ? null : g.naam)}
               >
                 <td className="py-3 px-3 text-slate-400">
@@ -112,7 +114,7 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
                   </td>
                 </tr>
               )}
-            </>
+            </React.Fragment>
           ))}
         </tbody>
       </table>
