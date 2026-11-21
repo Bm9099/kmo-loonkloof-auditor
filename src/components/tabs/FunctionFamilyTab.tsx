@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, AlertCircle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { FunctionGroup } from '@/lib/types';
 
 interface FunctionFamilyTabProps {
@@ -83,7 +82,7 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
                 </td>
               </tr>
               {expanded === g.naam && (
-                <tr key={`${g.naam}-detail`} className="bg-blue-50/50">
+                <tr className="bg-blue-50/50">
                   <td colSpan={8} className="px-6 py-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                       <div>
