@@ -92,7 +92,8 @@ export function KpiCards({ result }: KpiCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="mb-6">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
@@ -113,6 +114,10 @@ export function KpiCards({ result }: KpiCardsProps) {
           </div>
         );
       })}
+    </div>
+    <p className="text-xs text-slate-400 italic">
+      ⚠️ Loonkloof berekend op basis van voltijds equivalent (VTE) brutomaandloon. Indien uw data deeltijdwerkers bevat die niet naar VTE zijn omgezet, kan de loonkloof afwijken van de wettelijk vereiste berekening (Art. 9 EU Richtlijn 2023/970).
+    </p>
     </div>
   );
 }

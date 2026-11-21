@@ -17,6 +17,10 @@ export interface FunctionGroup {
   gemiddeldV: number;
   mediaanM: number;
   mediaanV: number;
+  p25: number;
+  p75: number;
+  gemiddeldVariabelM: number;
+  gemiddeldVariabelV: number;
   loonkloof: number;
   absLoonkloof: number;
   status: 'conform' | 'actie_vereist' | 'onvoldoende_data';
