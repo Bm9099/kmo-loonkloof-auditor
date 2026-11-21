@@ -179,50 +179,52 @@ export function EmployeeInfoTab({ employees, groups }: EmployeeInfoTabProps) {
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-white/40 mb-4">
           Genereer het officieel antwoorddocument voor werknemers die hun recht op looninformatie
-          uitoefenen conform <strong>EU Art. 7 Richtlijn 2023/970</strong>.
+          uitoefenen conform <strong className="text-white/60">EU Art. 7 Richtlijn 2023/970</strong>.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
           <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">Werknemer ID</label>
+            <label className="block text-xs font-medium text-white/40 mb-1">Werknemer ID</label>
             <select
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E40AF]"
+              className="w-full rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
               value={selectedId}
               onChange={(e) => { setSelectedId(e.target.value); setDocText(''); }}
             >
-              <option value="">Selecteer werknemer ID…</option>
+              <option value="" style={{ background: '#1a1a1a' }}>Selecteer werknemer ID…</option>
               {employees.map((e) => (
-                <option key={e.id} value={e.id}>{e.id} — {e.functietitel}</option>
+                <option key={e.id} value={e.id} style={{ background: '#1a1a1a' }}>{e.id} — {e.functietitel}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-600 mb-1">Vergelijkingsgroep</label>
+            <label className="block text-xs font-medium text-white/40 mb-1">Vergelijkingsgroep</label>
             <select
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E40AF]"
+              className="w-full rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
               value={selectedGroup}
               onChange={(e) => { setSelectedGroup(e.target.value); setDocText(''); }}
             >
-              <option value="">Selecteer functiegroep…</option>
+              <option value="" style={{ background: '#1a1a1a' }}>Selecteer functiegroep…</option>
               {groups.map((g) => (
-                <option key={g.naam} value={g.naam}>{g.naam}</option>
+                <option key={g.naam} value={g.naam} style={{ background: '#1a1a1a' }}>{g.naam}</option>
               ))}
             </select>
           </div>
         </div>
 
         {group && selectedGroup && (
-          <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm mb-3 space-y-1">
+          <div className="rounded-lg px-4 py-3 text-sm mb-3 space-y-1" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
             <div>
-              <span className="text-slate-600">Gemiddeld loon van groep <strong>{selectedGroup}</strong>:</span>
-              <span className="text-[#0F172A] font-semibold ml-2">{fmt(gemiddeldLoon)}/maand</span>
+              <span className="text-white/50">Gemiddeld loon van groep <strong className="text-white/70">{selectedGroup}</strong>:</span>
+              <span className="text-white font-semibold ml-2">{fmt(gemiddeldLoon)}/maand</span>
             </div>
-            <div className="flex gap-4 text-xs text-slate-500">
+            <div className="flex gap-4 text-xs text-white/40">
               <span>Gem. M: {group.aantalM >= 2 ? fmt(group.gemiddeldM) : 'onvoldoende data'}</span>
               <span>Gem. V: {group.aantalV >= 2 ? fmt(group.gemiddeldV) : 'onvoldoende data'}</span>
               {group.status !== 'onvoldoende_data' && (
-                <span className={group.loonkloof > 5 ? 'text-red-600 font-medium' : 'text-emerald-600'}>
+                <span className={group.loonkloof > 5 ? 'text-red-400 font-medium' : 'text-teal-400'}>
                   Kloof: {group.loonkloof.toFixed(1)}%
                 </span>
               )}
@@ -231,7 +233,7 @@ export function EmployeeInfoTab({ employees, groups }: EmployeeInfoTabProps) {
         )}
 
         <Button
-          className="bg-[#1E40AF] hover:bg-[#1D3A9E] text-white gap-2"
+          className="bg-[#0D9488] hover:bg-[#0F766E] text-white gap-2"
           disabled={!selectedId || !selectedGroup || loading}
           onClick={generate}
         >
@@ -243,7 +245,7 @@ export function EmployeeInfoTab({ employees, groups }: EmployeeInfoTabProps) {
       {docText && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-semibold text-slate-700">Officieel antwoorddocument</p>
+            <p className="text-sm font-semibold text-white/70">Officieel antwoorddocument</p>
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -265,7 +267,7 @@ export function EmployeeInfoTab({ employees, groups }: EmployeeInfoTabProps) {
               </Button>
             </div>
           </div>
-          <pre className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">
+          <pre className="rounded-lg p-4 text-sm text-white/70 whitespace-pre-wrap font-sans leading-relaxed" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
             {docText}
           </pre>
         </div>

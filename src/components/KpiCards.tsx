@@ -11,11 +11,11 @@ export function KpiCards({ result }: KpiCardsProps) {
   const { totaleGemiddeldeLoonkloof, aantalActieVereist, mediaanVerschilEuro, mediaanLoonkloof, complianceScore } = result;
 
   const gapAbs = Math.abs(totaleGemiddeldeLoonkloof);
-  const gapValueColor = gapAbs > 5 ? 'text-red-600' : 'text-emerald-600';
-  const gapDotColor = gapAbs < 3 ? 'bg-emerald-500' : gapAbs < 5 ? 'bg-amber-400' : 'bg-red-500';
+  const gapValueColor = gapAbs > 5 ? 'text-red-400' : 'text-teal-400';
+  const gapDotColor = gapAbs < 3 ? 'bg-teal-500' : gapAbs < 5 ? 'bg-amber-400' : 'bg-red-500';
 
   const scoreColor =
-    complianceScore >= 80 ? 'text-emerald-600' : complianceScore >= 60 ? 'text-amber-500' : 'text-red-600';
+    complianceScore >= 80 ? 'text-teal-400' : complianceScore >= 60 ? 'text-amber-400' : 'text-red-400';
 
   const cards = [
     {
@@ -30,7 +30,7 @@ export function KpiCards({ result }: KpiCardsProps) {
       icon: AlertTriangle,
       label: 'Actie Vereist',
       value: `${aantalActieVereist}`,
-      valueColor: aantalActieVereist > 0 ? 'text-red-600' : 'text-emerald-600',
+      valueColor: aantalActieVereist > 0 ? 'text-red-400' : 'text-teal-400',
       sub: `functiegroep${aantalActieVereist !== 1 ? 'en' : ''} >5% kloof`,
       indicator: null,
     },
@@ -38,7 +38,7 @@ export function KpiCards({ result }: KpiCardsProps) {
       icon: Euro,
       label: 'Mediaan Verschil',
       value: `\u20ac${Math.abs(mediaanVerschilEuro).toLocaleString('nl-BE', { maximumFractionDigits: 0 })}`,
-      valueColor: 'text-slate-900',
+      valueColor: 'text-white',
       sub: `${Math.abs(mediaanLoonkloof).toFixed(1)}% mediaan kloof`,
       indicator: null,
     },
@@ -59,15 +59,18 @@ export function KpiCards({ result }: KpiCardsProps) {
         return (
           <div
             key={card.label}
-            className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 hover:shadow-md hover:scale-[1.02] transition-all duration-200"
+            className="rounded-2xl p-6 hover:scale-[1.02] transition-all duration-200"
+            style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)')}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
           >
             <div className="flex items-center justify-between mb-3">
-              <Icon className="w-5 h-5 text-slate-400" />
+              <Icon className="w-5 h-5 text-white/20" />
               {card.indicator}
             </div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">{card.label}</p>
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-1">{card.label}</p>
             <div className={`text-4xl font-black mb-1 ${card.valueColor}`}>{card.value}</div>
-            <p className="text-xs text-slate-400">{card.sub}</p>
+            <p className="text-xs text-white/30">{card.sub}</p>
           </div>
         );
       })}

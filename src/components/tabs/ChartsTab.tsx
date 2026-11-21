@@ -18,7 +18,7 @@ interface ChartsTabProps {
   employees: Employee[];
 }
 
-const COLORS = { M: '#1E40AF', V: '#EC4899', X: '#8B5CF6' };
+const COLORS = { M: '#0D9488', V: '#6366F1', X: '#8B5CF6' };
 const GENDER_LABELS = { M: 'Man', V: 'Vrouw', X: 'Non-binair' } as const;
 
 interface TooltipEntry {
@@ -31,10 +31,10 @@ interface TooltipEntry {
 function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: TooltipEntry[]; label?: unknown }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-lg px-4 py-3 text-sm ring-1 ring-slate-900/5">
-      {label != null && <p className="font-semibold text-slate-800 mb-1.5">{String(label)}</p>}
+    <div className="rounded-xl shadow-lg px-4 py-3 text-sm" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)' }}>
+      {label != null && <p className="font-semibold text-white mb-1.5">{String(label)}</p>}
       {payload.map((entry, i) => (
-        <div key={i} className="flex items-center gap-2 text-slate-600">
+        <div key={i} className="flex items-center gap-2 text-white/60">
           <span
             className="w-2 h-2 rounded-full shrink-0"
             style={{ backgroundColor: String(entry.color) }}
@@ -56,12 +56,12 @@ function ScatterTooltip({ active, payload }: { active?: boolean; payload?: Toolt
   const d = payload[0]?.payload as { x: number; y: number; geslacht: 'M' | 'V' | 'X' };
   if (!d) return null;
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-lg px-4 py-3 text-sm ring-1 ring-slate-900/5">
-      <p className="font-semibold text-slate-800 mb-1">{GENDER_LABELS[d.geslacht]}</p>
-      <p className="text-slate-600">
+    <div className="rounded-xl shadow-lg px-4 py-3 text-sm" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)' }}>
+      <p className="font-semibold text-white mb-1">{GENDER_LABELS[d.geslacht]}</p>
+      <p className="text-white/60">
         <span className="font-medium">Anciënniteit:</span> {d.x} jaar
       </p>
-      <p className="text-slate-600">
+      <p className="text-white/60">
         <span className="font-medium">Bruto loon:</span>{' '}
         €{d.y.toLocaleString('nl-BE', { minimumFractionDigits: 0 })}
       </p>
@@ -73,7 +73,7 @@ function LegendDots({ items }: { items: { color: string; label: string }[] }) {
   return (
     <div className="flex gap-4 flex-wrap">
       {items.map((i) => (
-        <div key={i.label} className="flex items-center gap-1.5 text-xs text-slate-500">
+        <div key={i.label} className="flex items-center gap-1.5 text-xs text-white/40">
           <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: i.color }} />
           {i.label}
         </div>
@@ -109,27 +109,27 @@ export function ChartsTab({ groups, employees }: ChartsTabProps) {
       {/* Bar chart */}
       <div>
         <div className="mb-4">
-          <h3 className="text-base font-bold text-[#0F172A]">
+          <h3 className="text-base font-bold text-white/80">
             Gem. bruto maandloon per functiegroep
           </h3>
-          <p className="text-sm text-slate-500 mt-0.5">Vergelijking man vs. vrouw per functiecategorie</p>
+          <p className="text-sm text-white/40 mt-0.5">Vergelijking man vs. vrouw per functiecategorie</p>
         </div>
         <div className="flex items-center gap-4 mb-3">
           <LegendDots items={[{ color: COLORS.M, label: 'Man' }, { color: COLORS.V, label: 'Vrouw' }]} />
         </div>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={barData} margin={{ top: 5, right: 20, left: 10, bottom: 60 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11, fill: '#64748b' }}
+              tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.3)' }}
               angle={-35}
               textAnchor="end"
               interval={0}
             />
             <YAxis
               tickFormatter={(v: number) => `€${(v / 1000).toFixed(1)}k`}
-              tick={{ fontSize: 11, fill: '#64748b' }}
+              tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.3)' }}
             />
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <Tooltip content={(props: any) => <ChartTooltip {...props} />} />
@@ -142,10 +142,10 @@ export function ChartsTab({ groups, employees }: ChartsTabProps) {
       {/* Scatter chart */}
       <div>
         <div className="mb-4">
-          <h3 className="text-base font-bold text-[#0F172A]">
+          <h3 className="text-base font-bold text-white/80">
             Anciënniteit vs. bruto maandloon
           </h3>
-          <p className="text-sm text-slate-500 mt-0.5">Spreiding per medewerker, gekleurd op geslacht</p>
+          <p className="text-sm text-white/40 mt-0.5">Spreiding per medewerker, gekleurd op geslacht</p>
         </div>
         <div className="flex items-center gap-4 mb-3">
           <LegendDots items={[
@@ -156,19 +156,19 @@ export function ChartsTab({ groups, employees }: ChartsTabProps) {
         </div>
         <ResponsiveContainer width="100%" height={300}>
           <ScatterChart margin={{ top: 5, right: 20, left: 10, bottom: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
             <XAxis
               dataKey="x"
               name="Anciënniteit"
               unit=" jr"
-              tick={{ fontSize: 11, fill: '#64748b' }}
-              label={{ value: 'Anciënniteit (jaar)', position: 'insideBottom', offset: -5, fontSize: 11, fill: '#94a3b8' }}
+              tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.3)' }}
+              label={{ value: 'Anciënniteit (jaar)', position: 'insideBottom', offset: -5, fontSize: 11, fill: 'rgba(255,255,255,0.2)' }}
             />
             <YAxis
               dataKey="y"
               name="Loon"
               tickFormatter={(v: number) => `€${(v / 1000).toFixed(1)}k`}
-              tick={{ fontSize: 11, fill: '#64748b' }}
+              tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.3)' }}
             />
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <Tooltip content={(props: any) => <ScatterTooltip {...props} />} cursor={{ strokeDasharray: '3 3' }} />

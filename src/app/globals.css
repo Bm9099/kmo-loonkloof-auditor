@@ -148,3 +148,6 @@
 .animate-fade-in {
   animation: fade-in 0.25s ease both;
 }
+
+.accent-teal { color: #0D9488; }
+.bg-surface { background: #111111; }

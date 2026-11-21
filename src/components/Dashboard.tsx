@@ -35,16 +35,17 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
   if (!result) return null;
 
   return (
-    <div className="bg-slate-50 min-h-screen">
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
+    <div className="bg-[#0A0A0A] min-h-screen">
+      <div className="sticky top-0 z-10 backdrop-blur-md border-b" style={{ background: 'rgba(0,0,0,0.8)', borderColor: 'rgba(255,255,255,0.05)' }}>
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-[#0F172A]">Loonkloof Analyse</h2>
-            <p className="text-sm text-slate-500">{employees.length} werknemers geanalyseerd</p>
+            <h2 className="text-xl font-bold text-white">Loonkloof Analyse</h2>
+            <p className="text-sm text-white/40">{employees.length} werknemers geanalyseerd</p>
           </div>
           <button
             type="button"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium text-white/70 hover:text-white transition-colors"
+            style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }}
             onClick={onReset}
           >
             <RefreshCw className="w-4 h-4" />
@@ -56,8 +57,8 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
       <div className="max-w-6xl mx-auto px-4 py-8 pb-16">
         <KpiCards result={result} />
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-          <div className="border-b border-slate-100 px-6 pt-4 flex gap-1 overflow-x-auto">
+        <div className="rounded-2xl border overflow-hidden" style={{ background: '#111111', borderColor: 'rgba(255,255,255,0.08)' }}>
+          <div className="flex gap-1 px-6 pt-4 overflow-x-auto" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             {TABS.map((tab) => (
               <button
                 key={tab.value}
@@ -65,8 +66,8 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
                 onClick={() => setActiveTab(tab.value)}
                 className={`flex-shrink-0 px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors ${
                   activeTab === tab.value
-                    ? 'bg-slate-900 text-white'
-                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-[#0D9488] text-white'
+                    : 'text-white/40 hover:text-white hover:bg-white/5'
                 }`}
               >
                 {tab.label}

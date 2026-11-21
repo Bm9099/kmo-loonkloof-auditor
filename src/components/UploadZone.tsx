@@ -51,10 +51,10 @@ export function UploadZone({ onDataLoaded }: UploadZoneProps) {
   );
 
   return (
-    <div className="bg-white py-20 px-6">
+    <div className="bg-[#0A0A0A] py-20 px-6">
       <div className="max-w-2xl mx-auto">
-        <h2 className="text-3xl font-bold text-slate-900 text-center mb-2">Upload uw loondata</h2>
-        <p className="text-slate-500 text-center mb-10">Sleep uw Excel-bestand of kies een optie hieronder</p>
+        <h2 className="text-3xl font-bold text-white text-center mb-2">Upload uw loondata</h2>
+        <p className="text-white/50 text-center mb-10">Sleep uw Excel-bestand of kies een optie hieronder</p>
 
         <div
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
@@ -63,7 +63,9 @@ export function UploadZone({ onDataLoaded }: UploadZoneProps) {
           onClick={() => fileInputRef.current?.click()}
           className={`
             border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all
-            ${isDragging ? 'border-blue-400 bg-blue-50/30' : 'border-slate-200 bg-slate-50 hover:border-blue-400 hover:bg-blue-50/30'}
+            ${isDragging
+              ? 'border-teal-500 bg-white/10'
+              : 'border-white/10 bg-white/5 hover:border-teal-500 hover:bg-white/10'}
           `}
         >
           <input
@@ -73,27 +75,27 @@ export function UploadZone({ onDataLoaded }: UploadZoneProps) {
             className="hidden"
             onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
           />
-          <Upload className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-          <p className="text-sm font-medium text-slate-700 mb-1">
+          <Upload className="w-10 h-10 text-white/30 mx-auto mb-3" />
+          <p className="text-sm font-medium text-white/70 mb-1">
             Sleep uw Excel-bestand hier of klik om te bladeren
           </p>
-          <p className="text-xs text-slate-400">.xlsx, .xls of .csv &middot; max. 10 MB</p>
-          {loading && <p className="text-sm text-blue-600 mt-3">Bestand verwerken&hellip;</p>}
-          {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
+          <p className="text-xs text-white/30">.xlsx, .xls of .csv &middot; max. 10 MB</p>
+          {loading && <p className="text-sm text-teal-400 mt-3">Bestand verwerken&hellip;</p>}
+          {error && <p className="text-sm text-red-400 mt-3">{error}</p>}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 mt-6">
           <button
             type="button"
-            className="flex-1 bg-white border border-slate-200 hover:border-slate-400 rounded-xl px-6 py-4 flex items-center gap-3 shadow-sm hover:shadow-md transition-all text-slate-700 font-medium"
+            className="flex-1 bg-white/5 border border-white/10 hover:border-white/20 text-white rounded-xl px-6 py-4 flex items-center gap-3 transition-all font-medium"
             onClick={(e) => { e.stopPropagation(); downloadTemplate(); }}
           >
-            <Download className="w-5 h-5 text-slate-400 shrink-0" />
+            <Download className="w-5 h-5 text-white/40 shrink-0" />
             Download Sjabloon
           </button>
           <button
             type="button"
-            className="flex-1 bg-[#1E40AF] hover:bg-[#1D3A9E] text-white rounded-xl px-6 py-4 flex items-center gap-3 shadow-lg hover:shadow-xl transition-all font-semibold"
+            className="flex-1 bg-[#0D9488] hover:bg-[#0F766E] text-white rounded-xl px-6 py-4 flex items-center gap-3 shadow-lg hover:shadow-xl transition-all font-semibold"
             onClick={(e) => { e.stopPropagation(); onDataLoaded(demoData); }}
           >
             <Users className="w-5 h-5 shrink-0" />
@@ -101,10 +103,10 @@ export function UploadZone({ onDataLoaded }: UploadZoneProps) {
           </button>
         </div>
 
-        <div className="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-500 flex items-start gap-2">
-          <FileSpreadsheet className="w-4 h-4 shrink-0 mt-0.5 text-slate-400" />
+        <div className="mt-4 p-3 border border-white/8 rounded-lg text-xs text-white/40 flex items-start gap-2" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <FileSpreadsheet className="w-4 h-4 shrink-0 mt-0.5 text-white/30" />
           <span>
-            Verplichte kolommen: <strong>id, geslacht (M/V/X), functietitel, paritair_comite,
+            Verplichte kolommen: <strong className="text-white/60">id, geslacht (M/V/X), functietitel, paritair_comite,
             bruto_maandloon_voltijds, ancienniteit_jaren, variabel_loon_jaar</strong>. Geen namen of
             BSN-nummers invoeren.
           </span>

@@ -138,24 +138,25 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-white/40 mb-4">
           Genereer genderneutrale vacatureteksten met verplichte loonfork conform{' '}
-          <strong>EU Art. 5 Richtlijn 2023/970</strong>.
+          <strong className="text-white/60">EU Art. 5 Richtlijn 2023/970</strong>.
         </p>
         <div className="flex gap-3 flex-wrap">
           <div className="flex-1 min-w-[200px] relative">
             <select
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E40AF]"
+              className="w-full rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
               value={selectedGroup}
               onChange={(e) => { setSelectedGroup(e.target.value); setVacaturetekst(''); }}
             >
-              <option value="">Selecteer een functiegroep…</option>
+              <option value="" style={{ background: '#1a1a1a' }}>Selecteer een functiegroep…</option>
               {groups.map((g) => (
-                <option key={g.naam} value={g.naam}>{g.naam}</option>
+                <option key={g.naam} value={g.naam} style={{ background: '#1a1a1a' }}>{g.naam}</option>
               ))}
             </select>
             <button
-              className="absolute right-8 top-2.5 text-slate-400 hover:text-slate-600"
+              className="absolute right-8 top-2.5 text-white/30 hover:text-white/60"
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               type="button"
@@ -164,14 +165,14 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
               <Info className="w-4 h-4" />
             </button>
             {showTooltip && (
-              <div className="absolute z-10 top-10 right-0 w-72 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-lg leading-relaxed">
+              <div className="absolute z-10 top-10 right-0 w-72 text-white text-xs rounded-lg p-3 shadow-lg leading-relaxed" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <strong className="block mb-1">Groeperingslogica (Art. 4)</strong>
                 {GROEPERING_TOELICHTING}
               </div>
             )}
           </div>
           <Button
-            className="bg-[#1E40AF] hover:bg-[#1D3A9E] text-white gap-2"
+            className="bg-[#0D9488] hover:bg-[#0F766E] text-white gap-2"
             disabled={!selectedGroup || loading}
             onClick={generate}
           >
@@ -182,19 +183,19 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
       </div>
 
       {loonfork && selectedGroup && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-sm">
-          <span className="font-semibold text-blue-800">Loonfork voor {selectedGroup} (P25–P75):</span>
-          <span className="text-blue-700 ml-2">
+        <div className="rounded-lg px-4 py-3 text-sm" style={{ background: 'rgba(13,148,136,0.1)', border: '1px solid rgba(13,148,136,0.3)' }}>
+          <span className="font-semibold text-teal-400">Loonfork voor {selectedGroup} (P25–P75):</span>
+          <span className="text-teal-300 ml-2">
             €{Math.round(loonfork.p25).toLocaleString('nl-BE')} – €{Math.round(loonfork.p75).toLocaleString('nl-BE')} bruto/maand
           </span>
-          <span className="text-blue-500 text-xs ml-2">(gebaseerd op interne P25–P75 range, conform Art. 5)</span>
+          <span className="text-teal-500 text-xs ml-2">(gebaseerd op interne P25–P75 range, conform Art. 5)</span>
         </div>
       )}
 
       {vacaturetekst && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-semibold text-slate-700">Gegenereerde vacaturetekst</p>
+            <p className="text-sm font-semibold text-white/70">Gegenereerde vacaturetekst</p>
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -216,7 +217,7 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
               </Button>
             </div>
           </div>
-          <pre className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">
+          <pre className="rounded-lg p-4 text-sm text-white/70 whitespace-pre-wrap font-sans leading-relaxed" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
             {vacaturetekst}
           </pre>
         </div>

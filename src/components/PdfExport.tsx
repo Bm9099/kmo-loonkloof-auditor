@@ -240,16 +240,17 @@ export function PdfExport({ result }: PdfExportProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl">
+    <div className="flex flex-wrap items-center gap-3 p-4 rounded-xl" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)' }}>
       <input
         type="text"
         placeholder="Bedrijfsnaam (optioneel)"
         value={bedrijfsnaam}
         onChange={(e) => setBedrijfsnaam(e.target.value)}
-        className="flex-1 min-w-[200px] rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E40AF]"
+        className="flex-1 min-w-[200px] rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-teal-500"
+        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
       />
       <Button
-        className="bg-[#1E40AF] hover:bg-[#1D3A9E] text-white gap-2"
+        className="bg-[#0D9488] hover:bg-[#0F766E] text-white gap-2"
         onClick={generate}
         disabled={loading}
       >
