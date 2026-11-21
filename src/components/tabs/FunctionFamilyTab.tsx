@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, AlertCircle } from 'lucide-react';
+import { ChevronDown, ChevronRight, AlertCircle, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { FunctionGroup } from '@/lib/types';
+
+const GROEPERING_TOELICHTING =
+  'Automatisch op basis van trefwoorden in functietitel (bijv. "admin", "sales", "it"). Criteria: vergelijkbare taken, verantwoordelijkheid en competentievereisten conform Art. 4 EU Richtlijn 2023/970.';
 
 interface FunctionFamilyTabProps {
   groups: FunctionGroup[];
@@ -37,6 +40,7 @@ function fmt(n: number) {
 
 export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<string | null>(null);
 
   return (
     <div className="overflow-x-auto">
@@ -68,7 +72,29 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
                     <ChevronRight className="w-4 h-4" />
                   )}
                 </td>
-                <td className="py-3 px-3 font-medium text-[#0F172A]">{g.naam}</td>
+                <td className="py-3 px-3 font-medium text-[#0F172A]">
+                  <div className="flex items-center gap-1.5">
+                    {g.naam}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        className="text-slate-400 hover:text-slate-600"
+                        onMouseEnter={(e) => { e.stopPropagation(); setTooltip(g.naam); }}
+                        onMouseLeave={() => setTooltip(null)}
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label="Info over groeperingslogica"
+                      >
+                        <Info className="w-3.5 h-3.5" />
+                      </button>
+                      {tooltip === g.naam && (
+                        <div className="absolute z-20 left-6 top-0 w-64 bg-slate-800 text-white text-xs rounded-lg p-2.5 shadow-lg leading-relaxed">
+                          <strong className="block mb-1">Groeperingslogica (Art. 4)</strong>
+                          {GROEPERING_TOELICHTING}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </td>
                 <td className="py-3 px-3 text-center text-slate-600">{g.aantalM}</td>
                 <td className="py-3 px-3 text-center text-slate-600">{g.aantalV}</td>
                 <td className="py-3 px-3 text-right text-slate-600">{g.gemiddeldM > 0 ? fmt(g.gemiddeldM) : '\u2014'}</td>
@@ -91,10 +117,28 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
                         <p className="text-slate-600">Abs. verschil: {fmt(g.absLoonkloof)}/maand</p>
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-700 mb-1">Anci\u00ebnniteitsverklaring</p>
-                        <p className="text-slate-600">
-                          ~{g.ancienniteitVerklaring.toFixed(0)}% van het loonverschil is mogelijk
-                          verklaard door verschil in gemiddelde anci\u00ebnniteit.
+                        <p className="font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                          Anciënniteitsverklaring
+                          <span className="relative group cursor-pointer">
+                            <Info className="w-3 h-3 text-slate-400" />
+                            <span className="absolute z-20 left-5 top-0 w-56 bg-slate-800 text-white text-xs rounded p-2 hidden group-hover:block leading-relaxed">
+                              Berekend als: (verschil gemiddelde anciënniteit × €150/jaar) / absoluut loonverschil. €150/jaar is een indicatieve waarde per anciënniteitsjaar.
+                            </span>
+                          </span>
+                        </p>
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="flex-1 bg-slate-200 rounded-full h-1.5">
+                            <div
+                              className="bg-blue-500 h-1.5 rounded-full"
+                              style={{ width: `${Math.min(100, g.ancienniteitVerklaring)}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-semibold text-blue-700">
+                            ~{g.ancienniteitVerklaring.toFixed(0)}%
+                          </span>
+                        </div>
+                        <p className="text-slate-500 text-xs">
+                          van het loonverschil mogelijk verklaard door anciënniteit
                         </p>
                       </div>
                       <div>

@@ -24,6 +24,15 @@ function median(values: number[]): number {
   return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 }
 
+export function percentile(values: number[], p: number): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const idx = (p / 100) * (sorted.length - 1);
+  const lo = Math.floor(idx);
+  const hi = Math.ceil(idx);
+  return lo === hi ? sorted[lo] : sorted[lo] + (sorted[hi] - sorted[lo]) * (idx - lo);
+}
+
 function average(values: number[]): number {
   if (values.length === 0) return 0;
   return values.reduce((a, b) => a + b, 0) / values.length;
@@ -62,11 +71,17 @@ function buildFunctionGroup(naam: string, employees: Employee[]): FunctionGroup 
 
   const lonenM = males.map((e) => e.bruto_maandloon_voltijds);
   const lonenV = females.map((e) => e.bruto_maandloon_voltijds);
+  const alleLonenVTE = employees.map((e) => e.bruto_maandloon_voltijds);
 
   const gemiddeldM = average(lonenM);
   const gemiddeldV = average(lonenV);
   const mediaanM = median(lonenM);
   const mediaanV = median(lonenV);
+  const p25 = percentile(alleLonenVTE, 25);
+  const p75 = percentile(alleLonenVTE, 75);
+
+  const gemiddeldVariabelM = average(males.map((e) => e.variabel_loon_jaar));
+  const gemiddeldVariabelV = average(females.map((e) => e.variabel_loon_jaar));
 
   const loonkloof = gemiddeldM > 0 ? ((gemiddeldM - gemiddeldV) / gemiddeldM) * 100 : 0;
   const absLoonkloof = Math.abs(gemiddeldM - gemiddeldV);
@@ -99,6 +114,10 @@ function buildFunctionGroup(naam: string, employees: Employee[]): FunctionGroup 
     gemiddeldV,
     mediaanM,
     mediaanV,
+    p25,
+    p75,
+    gemiddeldVariabelM,
+    gemiddeldVariabelV,
     loonkloof,
     absLoonkloof,
     status,
