@@ -14,23 +14,20 @@ interface FunctionFamilyTabProps {
 function StatusBadge({ status }: { status: FunctionGroup['status'] }) {
   if (status === 'conform') {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+      <span className="rounded-full px-3 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700">
         Conform &lt;5%
       </span>
     );
   }
   if (status === 'actie_vereist') {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">
-        <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+      <span className="rounded-full px-3 py-1 text-xs font-semibold bg-red-50 text-red-700">
         Actie Vereist &gt;5%
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+    <span className="rounded-full px-3 py-1 text-xs font-semibold bg-amber-50 text-amber-600">
       Onvoldoende Data
     </span>
   );
@@ -48,15 +45,15 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-200">
-            <th className="text-left py-3 px-3 font-semibold text-slate-600 w-6"></th>
-            <th className="text-left py-3 px-3 font-semibold text-slate-600">Functiegroep</th>
-            <th className="text-center py-3 px-3 font-semibold text-slate-600">#M</th>
-            <th className="text-center py-3 px-3 font-semibold text-slate-600">#V</th>
-            <th className="text-right py-3 px-3 font-semibold text-slate-600">Gem. Bruto M</th>
-            <th className="text-right py-3 px-3 font-semibold text-slate-600">Gem. Bruto V</th>
-            <th className="text-right py-3 px-3 font-semibold text-slate-600">Kloof %</th>
-            <th className="text-left py-3 px-3 font-semibold text-slate-600">Status</th>
+          <tr className="border-b border-slate-100">
+            <th className="text-left py-3 px-3 text-xs font-semibold text-slate-400 uppercase tracking-widest w-6"></th>
+            <th className="text-left py-3 px-3 text-xs font-semibold text-slate-400 uppercase tracking-widest">Functiegroep</th>
+            <th className="text-center py-3 px-3 text-xs font-semibold text-slate-400 uppercase tracking-widest">#M</th>
+            <th className="text-center py-3 px-3 text-xs font-semibold text-slate-400 uppercase tracking-widest">#V</th>
+            <th className="text-right py-3 px-3 text-xs font-semibold text-slate-400 uppercase tracking-widest">Gem. Bruto M</th>
+            <th className="text-right py-3 px-3 text-xs font-semibold text-slate-400 uppercase tracking-widest">Gem. Bruto V</th>
+            <th className="text-right py-3 px-3 text-xs font-semibold text-slate-400 uppercase tracking-widest">Kloof %</th>
+            <th className="text-left py-3 px-3 text-xs font-semibold text-slate-400 uppercase tracking-widest">Status</th>
           </tr>
         </thead>
         <tbody>

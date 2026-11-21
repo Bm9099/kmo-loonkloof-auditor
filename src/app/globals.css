@@ -129,15 +129,15 @@
   }
 }
 
-@keyframes gradient-shift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.hero-gradient {
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(29, 58, 158, 0.3), transparent), #09090B;
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 8s ease infinite;
+.text-gradient {
+  background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @keyframes fade-in {
@@ -147,13 +147,4 @@
 
 .animate-fade-in {
   animation: fade-in 0.25s ease both;
-}
-
-@keyframes bounce-icon {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-4px); }
-}
-
-.animate-bounce-icon {
-  animation: bounce-icon 0.6s ease infinite;
 }

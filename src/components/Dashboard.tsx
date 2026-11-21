@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { KpiCards } from '@/components/KpiCards';
 import { FunctionFamilyTab } from '@/components/tabs/FunctionFamilyTab';
 import { ChartsTab } from '@/components/tabs/ChartsTab';
@@ -17,7 +16,7 @@ interface DashboardProps {
   onReset: () => void;
 }
 
-const TAB_ITEMS = [
+const TABS = [
   { value: 'functies', label: 'Functiefamilie Analyse' },
   { value: 'grafieken', label: 'Visuele Grafieken' },
   { value: 'vacature', label: 'Vacature Generator' },
@@ -36,18 +35,17 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
   if (!result) return null;
 
   return (
-    <div>
-      {/* Sticky header */}
-      <div className="sticky top-0 z-30 backdrop-blur-md bg-white/80 border-b border-slate-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div className="bg-slate-50 min-h-screen">
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <span className="text-base font-bold text-[#0F172A]">Loonkloof Analyse</span>
-            <span className="ml-2 text-sm text-slate-400">{employees.length} werknemers</span>
+            <h2 className="text-xl font-bold text-[#0F172A]">Loonkloof Analyse</h2>
+            <p className="text-sm text-slate-500">{employees.length} werknemers geanalyseerd</p>
           </div>
           <button
             type="button"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors shadow-sm"
             onClick={onReset}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-[#1E40AF] transition-colors px-3 py-1.5 rounded-lg hover:bg-blue-50"
           >
             <RefreshCw className="w-4 h-4" />
             Nieuw bestand
@@ -55,45 +53,34 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 pt-6 pb-16">
+      <div className="max-w-6xl mx-auto px-4 py-8 pb-16">
         <KpiCards result={result} />
 
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="bg-white border border-slate-200 rounded-2xl shadow-sm ring-1 ring-slate-900/5 overflow-hidden"
-        >
-          {/* Pill tabs */}
-          <div className="border-b border-slate-100 bg-slate-50/60 px-4 py-3">
-            <TabsList className="bg-transparent h-auto w-auto gap-1 p-0">
-              {TAB_ITEMS.map((tab) => (
-                <TabsTrigger
-                  key={tab.value}
-                  value={tab.value}
-                  className="px-4 py-2 text-sm font-medium rounded-full border-0 transition-all
-                    text-slate-500 hover:text-slate-800 hover:bg-white
-                    data-[state=active]:bg-[#1E40AF] data-[state=active]:text-white data-[state=active]:shadow-sm
-                    after:hidden"
-                >
-                  {tab.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="border-b border-slate-100 px-6 pt-4 flex gap-1 overflow-x-auto">
+            {TABS.map((tab) => (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setActiveTab(tab.value)}
+                className={`flex-shrink-0 px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors ${
+                  activeTab === tab.value
+                    ? 'bg-slate-900 text-white'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          <TabsContent value="functies" className="p-6 mt-0 animate-fade-in">
-            <FunctionFamilyTab groups={result.functieGroepen} />
-          </TabsContent>
-          <TabsContent value="grafieken" className="p-6 mt-0 animate-fade-in">
-            <ChartsTab groups={result.functieGroepen} employees={employees} />
-          </TabsContent>
-          <TabsContent value="vacature" className="p-6 mt-0 animate-fade-in">
-            <VacancyGeneratorTab groups={result.functieGroepen} />
-          </TabsContent>
-          <TabsContent value="werknemer" className="p-6 mt-0 animate-fade-in">
-            <EmployeeInfoTab employees={employees} groups={result.functieGroepen} />
-          </TabsContent>
-        </Tabs>
+          <div className="p-6 animate-fade-in">
+            {activeTab === 'functies' && <FunctionFamilyTab groups={result.functieGroepen} />}
+            {activeTab === 'grafieken' && <ChartsTab groups={result.functieGroepen} employees={employees} />}
+            {activeTab === 'vacature' && <VacancyGeneratorTab groups={result.functieGroepen} />}
+            {activeTab === 'werknemer' && <EmployeeInfoTab employees={employees} groups={result.functieGroepen} />}
+          </div>
+        </div>
 
         <div className="mt-6">
           <PdfExport result={result} />
