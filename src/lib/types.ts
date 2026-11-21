@@ -1,0 +1,37 @@
+export interface Employee {
+  id: string;
+  geslacht: 'M' | 'V' | 'X';
+  functietitel: string;
+  paritair_comite: string;
+  bruto_maandloon_voltijds: number;
+  ancienniteit_jaren: number;
+  variabel_loon_jaar: number;
+}
+
+export interface FunctionGroup {
+  naam: string;
+  employees: Employee[];
+  aantalM: number;
+  aantalV: number;
+  gemiddeldM: number;
+  gemiddeldV: number;
+  mediaanM: number;
+  mediaanV: number;
+  loonkloof: number;
+  absLoonkloof: number;
+  status: 'conform' | 'actie_vereist' | 'onvoldoende_data';
+  ancienniteitVerklaring: number;
+}
+
+export interface AnalysisResult {
+  totaleGemiddeldeLoonkloof: number;
+  mediaanLoonkloof: number;
+  mediaanVerschilEuro: number;
+  complianceScore: number;
+  aantalActieVereist: number;
+  functieGroepen: FunctionGroup[];
+}
+
+export interface RoleGrouping {
+  groepen: { naam: string; titels: string[] }[];
+}
