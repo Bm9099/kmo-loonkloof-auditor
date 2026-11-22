@@ -94,7 +94,7 @@ export function HistoriekTab() {
                 color: '#fff',
                 fontSize: 12,
               }}
-              formatter={(value: number) => [`${value}%`, 'Loonkloof']}
+              formatter={(value) => [`${value}%`, 'Loonkloof']}
             />
             <Bar dataKey="gap" radius={[4, 4, 0, 0]} maxBarSize={60}>
               {chartData.map((entry) => (
