@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { FileDown, FileText, Sparkles, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ApiKeyInput } from '@/components/ApiKeyInput';
+import { callOpenAI, getStoredApiKey, OpenAIError } from '@/lib/openai';
 import { FunctionGroup } from '@/lib/types';
 
 interface VacancyGeneratorTabProps {
@@ -14,6 +16,28 @@ const DISCLAIMER =
 
 const GROEPERING_TOELICHTING =
   'Functiegroepen worden automatisch bepaald op basis van trefwoordherkenning in de functietitel (bijv. "admin", "sales", "it"). Criteria: vergelijkbare taken, verantwoordelijkheid en competentievereisten conform Art. 4 EU Richtlijn 2023/970.';
+
+function generateVacancyFallback(groep: string, min: number, max: number): string {
+  return `**Vacature: ${groep}**
+
+Wij zijn op zoek naar een gemotiveerde medewerker voor onze afdeling ${groep}.
+
+**Over de functie**
+In deze rol draag je bij aan de dagelijkse werking van ons team. Je werkt nauw samen met collega's en rapporteert aan de teamleider.
+
+**Jouw profiel**
+- Relevante opleiding of gelijkwaardige ervaring
+- Sterke communicatievaardigheden in Nederlands
+- Teamspeler met aandacht voor detail
+
+**Wat bieden wij?**
+- Bruto maandloon: €${Math.round(min).toLocaleString('nl-BE')} – €${Math.round(max).toLocaleString('nl-BE')} (conform PC 200)
+- Extralegale voordelen
+- Flexibele werkuren en thuiswerkmogelijkheden
+- Opleidingskansen
+
+*Conform EU-richtlijn loontransparantie 2026/1646 publiceren wij steeds de loonfork bij onze vacatures.*`;
+}
 
 async function downloadPdf(vacaturetekst: string, selectedGroup: string, loonfork: { p25: number; p75: number }) {
   const { jsPDF } = await import('jspdf');
@@ -111,25 +135,48 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
   const [vacaturetekst, setVacaturetekst] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [apiKeyError, setApiKeyError] = useState('');
 
   const group = groups.find((g) => g.naam === selectedGroup);
-
   const loonfork = group ? { p25: group.p25, p75: group.p75 } : null;
 
   const generate = async () => {
     if (!group || !loonfork) return;
     setLoading(true);
     setVacaturetekst('');
+    setApiKeyError('');
+
+    const apiKey = getStoredApiKey();
+
+    if (!apiKey) {
+      setVacaturetekst(generateVacancyFallback(group.naam, loonfork.p25, loonfork.p75));
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await fetch('/api/analyze-roles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ functietitels: [], mode: 'vacancy', functieGroep: group.naam, loonfork }),
-      });
-      const data = await res.json() as { vacaturetekst: string };
-      setVacaturetekst(data.vacaturetekst ?? '');
-    } catch {
-      setVacaturetekst('Fout bij genereren. Probeer opnieuw.');
+      const content = await callOpenAI(
+        [
+          {
+            role: 'system',
+            content:
+              'Schrijf een genderneutrale Belgische vacaturetekst conform EU-richtlijn loontransparantie 2026/1646. Verplicht: vermeld de loonfork. Taal: Nederlands. JSON: { "vacaturetekst": string }',
+          },
+          {
+            role: 'user',
+            content: `Functiegroep: ${group.naam}. Loonfork: €${Math.round(loonfork.p25)} – €${Math.round(loonfork.p75)} bruto/maand. Paritair Comité 200.`,
+          },
+        ],
+        apiKey,
+      );
+      const parsed = JSON.parse(content) as { vacaturetekst: string };
+      setVacaturetekst(parsed.vacaturetekst ?? '');
+    } catch (err) {
+      if (err instanceof OpenAIError && err.status === 401) {
+        setApiKeyError('Ongeldige API-sleutel. Controleer uw sleutel en probeer opnieuw.');
+      } else {
+        setVacaturetekst('Fout bij genereren. Probeer opnieuw.');
+      }
     } finally {
       setLoading(false);
     }
@@ -137,14 +184,17 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start gap-2 rounded-lg px-4 py-3 text-xs text-amber-300/80" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
-        <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-400" />
-        <span>
-          De AI-vacaturetekstgenerator vereist een eigen OpenAI API-sleutel. Voer deze in via de instellingen of voeg{' '}
-          <code className="font-mono bg-white/10 px-1 rounded">OPENAI_API_KEY</code> toe aan uw{' '}
-          <code className="font-mono bg-white/10 px-1 rounded">.env.local</code>.
-        </span>
-      </div>
+      <ApiKeyInput onKeyChange={() => setApiKeyError('')} />
+
+      {apiKeyError && (
+        <div
+          className="rounded-lg px-4 py-3 text-sm text-red-300"
+          style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}
+        >
+          {apiKeyError}
+        </div>
+      )}
+
       <div>
         <p className="text-sm text-white/40 mb-4">
           Genereer genderneutrale vacatureteksten met verplichte loonfork conform{' '}
@@ -156,11 +206,18 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
               className="w-full rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
               value={selectedGroup}
-              onChange={(e) => { setSelectedGroup(e.target.value); setVacaturetekst(''); }}
+              onChange={(e) => {
+                setSelectedGroup(e.target.value);
+                setVacaturetekst('');
+              }}
             >
-              <option value="" style={{ background: '#1a1a1a' }}>Selecteer een functiegroep…</option>
+              <option value="" style={{ background: '#1a1a1a' }}>
+                Selecteer een functiegroep…
+              </option>
               {groups.map((g) => (
-                <option key={g.naam} value={g.naam} style={{ background: '#1a1a1a' }}>{g.naam}</option>
+                <option key={g.naam} value={g.naam} style={{ background: '#1a1a1a' }}>
+                  {g.naam}
+                </option>
               ))}
             </select>
             <button
@@ -173,7 +230,10 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
               <Info className="w-4 h-4" />
             </button>
             {showTooltip && (
-              <div className="absolute z-10 top-10 right-0 w-72 text-white text-xs rounded-lg p-3 shadow-lg leading-relaxed" style={{ background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div
+                className="absolute z-10 top-10 right-0 w-72 text-white text-xs rounded-lg p-3 shadow-lg leading-relaxed"
+                style={{ background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
                 <strong className="block mb-1">Groeperingslogica (Art. 4)</strong>
                 {GROEPERING_TOELICHTING}
               </div>
@@ -191,10 +251,14 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
       </div>
 
       {loonfork && selectedGroup && (
-        <div className="rounded-lg px-4 py-3 text-sm" style={{ background: 'rgba(13,148,136,0.1)', border: '1px solid rgba(13,148,136,0.3)' }}>
+        <div
+          className="rounded-lg px-4 py-3 text-sm"
+          style={{ background: 'rgba(13,148,136,0.1)', border: '1px solid rgba(13,148,136,0.3)' }}
+        >
           <span className="font-semibold text-teal-400">Loonfork voor {selectedGroup} (P25–P75):</span>
           <span className="text-teal-300 ml-2">
-            €{Math.round(loonfork.p25).toLocaleString('nl-BE')} – €{Math.round(loonfork.p75).toLocaleString('nl-BE')} bruto/maand
+            €{Math.round(loonfork.p25).toLocaleString('nl-BE')} – €{Math.round(loonfork.p75).toLocaleString('nl-BE')}{' '}
+            bruto/maand
           </span>
           <span className="text-teal-500 text-xs ml-2">(gebaseerd op interne P25–P75 range, conform Art. 5)</span>
         </div>
@@ -202,7 +266,7 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
 
       {vacaturetekst && (
         <div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
             <p className="text-sm font-semibold text-white/70">Gegenereerde vacaturetekst</p>
             <div className="flex gap-2">
               <Button

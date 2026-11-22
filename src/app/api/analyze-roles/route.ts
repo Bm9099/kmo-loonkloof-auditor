@@ -1,3 +1,8 @@
+/**
+ * @deprecated This server-side OpenAI proxy is deprecated and will be removed in a future release.
+ * AI features now call the OpenAI API directly from the browser using a user-supplied API key
+ * stored in localStorage. This route is kept temporarily as a keyword-based fallback only.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RequestBody {

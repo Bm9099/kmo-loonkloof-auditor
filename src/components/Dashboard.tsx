@@ -52,6 +52,7 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
   const [activeTab, setActiveTab] = useState('functies');
   const [premium, setPremium] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const analysis = calculateAnalysis(employees);
@@ -90,6 +91,7 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
             <p className="text-sm text-white/40">{employees.length} werknemers geanalyseerd</p>
           </div>
           <div className="flex items-center gap-3">
+            {/* Desktop nav */}
             <Link
               href="/prijzen"
               className="text-white/60 hover:text-white text-sm transition-colors hidden sm:block"
@@ -106,15 +108,57 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
             )}
             <button
               type="button"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium text-white/70 hover:text-white transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium text-white/70 hover:text-white transition-colors hidden sm:flex"
               style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }}
               onClick={onReset}
+            >
+              <RefreshCw className="w-4 h-4" />
+              Nieuw bestand
+            </button>
+            {/* Mobile hamburger */}
+            <button
+              type="button"
+              className="sm:hidden p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-colors"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label="Menu"
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+        {/* Mobile dropdown menu */}
+        {menuOpen && (
+          <div
+            className="sm:hidden px-4 pb-4 flex flex-col gap-2"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+          >
+            <Link
+              href="/prijzen"
+              className="text-white/60 hover:text-white text-sm py-2 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              Prijzen
+            </Link>
+            {!premium && (
+              <Link
+                href="/prijzen"
+                className="bg-teal-500 hover:bg-teal-600 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors text-center"
+                onClick={() => setMenuOpen(false)}
+              >
+                Upgrade
+              </Link>
+            )}
+            <button
+              type="button"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium text-white/70 hover:text-white transition-colors"
+              style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }}
+              onClick={() => { setMenuOpen(false); onReset(); }}
             >
               <RefreshCw className="w-4 h-4" />
               <span className="hidden sm:inline">Nieuw bestand</span>
             </button>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8 pb-16">
