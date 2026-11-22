@@ -17,7 +17,7 @@ export default function Home() {
     <main>
       <HeroSection />
       <UploadZone onDataLoaded={setEmployees} />
-      <footer className="bg-[#09090B] text-white/40 py-12 text-center text-sm">
+      <footer className="bg-black/40 backdrop-blur-sm text-white/40 py-12 text-center text-sm">
         Belgische KMO Loonkloof-Auditor &middot; Conform EU-Richtlijn 2023/970 &middot; 100% GDPR-veilig &middot; Geen data wordt opgeslagen
       </footer>
     </main>

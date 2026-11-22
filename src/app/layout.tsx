@@ -13,7 +13,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="nl" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#0A0A0A]">{children}</body>
+      <body
+        className="min-h-full flex flex-col"
+        style={{
+          background: 'linear-gradient(to bottom, #0F172A 0%, #0D2436 30%, #083344 60%, #042f2e 100%)',
+          minHeight: '100vh',
+        }}
+      >{children}</body>
     </html>
   );
 }

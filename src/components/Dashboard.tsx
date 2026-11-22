@@ -35,7 +35,7 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
   if (!result) return null;
 
   return (
-    <div className="bg-[#0A0A0A] min-h-screen">
+    <div className="bg-transparent min-h-screen">
       <div className="sticky top-0 z-10 backdrop-blur-md border-b" style={{ background: 'rgba(0,0,0,0.8)', borderColor: 'rgba(255,255,255,0.05)' }}>
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>

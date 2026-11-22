@@ -60,7 +60,7 @@ export function KpiCards({ result }: KpiCardsProps) {
           <div
             key={card.label}
             className="rounded-2xl p-6 hover:scale-[1.02] transition-all duration-200"
-            style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
             onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)')}
             onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
           >

@@ -13,8 +13,8 @@ export function HeroSection() {
     <div
       className="min-h-[75vh] flex flex-col justify-center items-center text-center px-6 py-24"
       style={{
-        backgroundColor: '#09090B',
-        backgroundImage: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(29, 58, 158, 0.4), transparent)',
+        backgroundColor: 'transparent',
+        backgroundImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(13, 148, 136, 0.15), transparent)',
       }}
     >
       <div className="bg-white/10 text-white/70 border border-white/10 rounded-full px-3 py-1 text-xs mb-8 inline-block">
