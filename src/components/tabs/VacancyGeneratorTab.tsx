@@ -137,6 +137,14 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
 
   return (
     <div className="space-y-5">
+      <div className="flex items-start gap-2 rounded-lg px-4 py-3 text-xs text-amber-300/80" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+        <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-400" />
+        <span>
+          De AI-vacaturetekstgenerator vereist een eigen OpenAI API-sleutel. Voer deze in via de instellingen of voeg{' '}
+          <code className="font-mono bg-white/10 px-1 rounded">OPENAI_API_KEY</code> toe aan uw{' '}
+          <code className="font-mono bg-white/10 px-1 rounded">.env.local</code>.
+        </span>
+      </div>
       <div>
         <p className="text-sm text-white/40 mb-4">
           Genereer genderneutrale vacatureteksten met verplichte loonfork conform{' '}

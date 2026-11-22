@@ -61,7 +61,7 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="sticky top-0 z-10 backdrop-blur-md border-b" style={{ background: 'rgba(0,0,0,0.8)', borderColor: 'rgba(255,255,255,0.05)' }}>
+      <div className="sticky top-0 z-10 border-b" style={{ backgroundColor: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderColor: 'rgba(255,255,255,0.05)' }}>
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-white">Loonkloof Analyse</h2>

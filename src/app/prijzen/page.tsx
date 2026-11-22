@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Check, Minus, Mail } from 'lucide-react';
+import { Check, Key, Minus, Mail } from 'lucide-react';
 
 const plans = [
   {
@@ -30,7 +30,8 @@ const plans = [
     period: '/jaar',
     sub: '≈ €13/maand',
     recommended: true,
-    features: ['Onbeperkte analyses', 'PDF compliance-rapport', 'Excel sjabloon download', 'AI vacatureteksten', 'Word-export', 'Prioriteitsondersteuning'],
+    apiKeyNotice: 'Vereist eigen OpenAI API-sleutel (gratis aan te maken op platform.openai.com)',
+    features: ['Onbeperkte analyses', 'PDF compliance-rapport', 'Excel sjabloon download', 'AI vacatureteksten', 'Word-export', 'Eigen API-sleutel', 'Prioriteitsondersteuning'],
     cta: 'Kies Professioneel',
     href: null,
     stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? null,
@@ -183,6 +184,12 @@ export default function PrijzenPage() {
                     <span className="text-base font-normal text-white/40">{plan.period}</span>
                   </p>
                   <p className="text-xs text-white/30 mt-1">{plan.sub}</p>
+                  {'apiKeyNotice' in plan && plan.apiKeyNotice && (
+                    <div className="flex items-start gap-1.5 mt-2">
+                      <Key className="w-3 h-3 text-amber-400 mt-0.5 shrink-0" />
+                      <p className="text-xs text-amber-300/70 leading-snug">{plan.apiKeyNotice as string}</p>
+                    </div>
+                  )}
                 </div>
                 {plan.recommended && (
                   <span className="bg-teal-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shrink-0 ml-2">
