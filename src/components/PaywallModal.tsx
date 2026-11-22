@@ -1,7 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { X, Check } from 'lucide-react';
 import Link from 'next/link';
+import { setPremiumToken } from '@/lib/usageTracking';
+
+const TEST_CODE = 'TESTPRO2024';
 
 interface PaywallModalProps {
   onClose: () => void;
@@ -21,6 +25,21 @@ const proFeatures = [
 ];
 
 export function PaywallModal({ onClose }: PaywallModalProps) {
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  function handleActivate() {
+    if (code.trim().toUpperCase() === TEST_CODE) {
+      setPremiumToken('test_pro_2024');
+      setError('');
+      setSuccess(true);
+      setTimeout(onClose, 1500);
+    } else {
+      setError('Ongeldige testcode');
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
@@ -104,6 +123,29 @@ export function PaywallModal({ onClose }: PaywallModalProps) {
               Kies Professioneel
             </Link>
           </div>
+        </div>
+
+        <div className="mt-4 mb-2 border-t border-white/5 pt-4">
+          <p className="text-xs text-white/30 mb-2">Testcode</p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => { setCode(e.target.value); setError(''); }}
+              onKeyDown={(e) => e.key === 'Enter' && handleActivate()}
+              placeholder="Voer testcode in"
+              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white/60 placeholder-white/20 focus:outline-none focus:border-white/20"
+            />
+            <button
+              type="button"
+              onClick={handleActivate}
+              className="px-3 py-1.5 rounded-lg border border-white/10 text-xs text-white/50 hover:text-white/70 hover:bg-white/5 transition-colors"
+            >
+              Activeer
+            </button>
+          </div>
+          {error && <p className="text-xs text-red-400/70 mt-1">{error}</p>}
+          {success && <p className="text-xs text-teal-400 mt-1">Pro-toegang geactiveerd</p>}
         </div>
 
         <div className="text-center">
