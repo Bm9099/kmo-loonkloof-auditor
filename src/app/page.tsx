@@ -67,7 +67,7 @@ export default function Home() {
 
       <HeroSection />
       <UploadZone onDataLoaded={handleDataLoaded} />
-      <footer className="bg-[#09090B] text-white/40 py-12 text-center text-sm">
+      <footer className="text-white/40 py-12 text-center text-sm">
         Belgische KMO Loonkloof-Auditor &middot; Conform EU-Richtlijn 2023/970 &middot; 100% GDPR-veilig &middot; Geen data wordt opgeslagen
       </footer>
     </main>

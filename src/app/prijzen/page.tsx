@@ -15,9 +15,9 @@ const plans = [
   },
   {
     name: 'Starter',
-    price: '€249',
+    price: '€79',
     period: '/jaar',
-    sub: '€20.75/maand',
+    sub: '≈ €7/maand',
     recommended: false,
     features: ['Onbeperkte analyses', 'PDF compliance-rapport', 'Excel sjabloon download', 'Compliance score', 'Functiefamilie-analyse'],
     cta: 'Kies Starter',
@@ -26,9 +26,9 @@ const plans = [
   },
   {
     name: 'Professioneel',
-    price: '€399',
+    price: '€149',
     period: '/jaar',
-    sub: '€33.25/maand',
+    sub: '≈ €13/maand',
     recommended: true,
     features: ['Onbeperkte analyses', 'PDF compliance-rapport', 'Excel sjabloon download', 'AI vacatureteksten', 'Word-export', 'Prioriteitsondersteuning'],
     cta: 'Kies Professioneel',
@@ -113,7 +113,7 @@ function FeatureCell({ value }: { value: string | boolean }) {
 
 export default function PrijzenPage() {
   return (
-    <div className="min-h-screen bg-[#09090B]">
+    <div className="min-h-screen" style={{ backgroundColor: 'transparent' }}>
       {/* Nav */}
       <nav className="border-b" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
