@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { FileText, FileDown, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ApiKeyInput } from '@/components/ApiKeyInput';
+import { callOpenAI, getStoredApiKey, OpenAIError } from '@/lib/openai';
 import { Employee, FunctionGroup } from '@/lib/types';
 
 interface EmployeeInfoTabProps {
@@ -136,11 +138,39 @@ async function downloadWord(
   URL.revokeObjectURL(url);
 }
 
+function generateEmployeeInfoFallback(
+  id: string,
+  groep: string,
+  gemiddeldLoon: number,
+): string {
+  const datum = new Date().toLocaleDateString('nl-BE');
+  return `**OFFICIEEL ANTWOORDDOCUMENT**
+Datum: ${datum}
+
+Betreft: Uitoefening recht op looninformatie (EU-richtlijn 2026/1646, Art. 7)
+
+Geachte medewerker (ID: ${id}),
+
+In antwoord op uw verzoek tot looninformatie bevestigen wij het volgende:
+
+**Uw functiegroep:** ${groep}
+
+**Gemiddeld bruto maandloon van uw functiegroep:** €${gemiddeldLoon.toLocaleString('nl-BE', { minimumFractionDigits: 2 })}
+
+Dit gemiddelde is berekend op basis van alle medewerkers in dezelfde functiegroep binnen onze organisatie, conform de methodologie vereist door de Europese Richtlijn 2026/1646 betreffende loontransparantie.
+
+**Juridische mededeling:** Alle persoonsgegevens worden verwerkt conform de AVG/GDPR. Dit document mag niet worden verspreid.
+
+Met vriendelijke groeten,
+HR-afdeling`;
+}
+
 export function EmployeeInfoTab({ employees, groups }: EmployeeInfoTabProps) {
   const [selectedId, setSelectedId] = useState<string>('');
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [docText, setDocText] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [apiKeyError, setApiKeyError] = useState('');
 
   const group = groups.find((g) => g.naam === selectedGroup);
   const gemiddeldLoon = group ? Math.round((group.gemiddeldM + group.gemiddeldV) / 2) : 0;
@@ -150,27 +180,39 @@ export function EmployeeInfoTab({ employees, groups }: EmployeeInfoTabProps) {
     if (!selectedId || !group) return;
     setLoading(true);
     setDocText('');
+    setApiKeyError('');
+
+    const apiKey = getStoredApiKey();
+
+    if (!apiKey) {
+      setDocText(generateEmployeeInfoFallback(selectedId, group.naam, gemiddeldLoon));
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await fetch('/api/analyze-roles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          functietitels: [],
-          mode: 'employee_info',
-          werknemer: {
-            id: selectedId,
-            functieGroep: group.naam,
-            gemiddeldLoon,
-            gemiddeldLoonM: group.aantalM >= 2 ? Math.round(group.gemiddeldM) : null,
-            gemiddeldLoonV: group.aantalV >= 2 ? Math.round(group.gemiddeldV) : null,
-            loonkloof: group.status !== 'onvoldoende_data' ? group.loonkloof : null,
+      const content = await callOpenAI(
+        [
+          {
+            role: 'system',
+            content:
+              'Schrijf een officieel antwoorddocument voor een werknemer die zijn/haar recht op looninformatie uitoefent (EU-richtlijn 2026/1646, Art. 7). Formeel Nederlands. JSON: { "antwoorddocument": string }',
           },
-        }),
-      });
-      const data = await res.json() as { antwoorddocument: string };
-      setDocText(data.antwoorddocument ?? '');
-    } catch {
-      setDocText('Fout bij genereren van document.');
+          {
+            role: 'user',
+            content: `Werknemer ID: ${selectedId}. Functiegroep: ${group.naam}. Gemiddeld loon van de groep: €${gemiddeldLoon}`,
+          },
+        ],
+        apiKey,
+      );
+      const parsed = JSON.parse(content) as { antwoorddocument: string };
+      setDocText(parsed.antwoorddocument ?? '');
+    } catch (err) {
+      if (err instanceof OpenAIError && err.status === 401) {
+        setApiKeyError('Ongeldige API-sleutel. Controleer uw sleutel en probeer opnieuw.');
+      } else {
+        setDocText('Fout bij genereren van document.');
+      }
     } finally {
       setLoading(false);
     }
@@ -178,6 +220,17 @@ export function EmployeeInfoTab({ employees, groups }: EmployeeInfoTabProps) {
 
   return (
     <div className="space-y-5">
+      <ApiKeyInput onKeyChange={() => setApiKeyError('')} />
+
+      {apiKeyError && (
+        <div
+          className="rounded-lg px-4 py-3 text-sm text-red-300"
+          style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}
+        >
+          {apiKeyError}
+        </div>
+      )}
+
       <div>
         <p className="text-sm text-white/40 mb-4">
           Genereer het officieel antwoorddocument voor werknemers die hun recht op looninformatie
