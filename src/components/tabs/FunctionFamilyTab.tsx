@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, AlertCircle, Info } from 'lucide-react';
 import { FunctionGroup } from '@/lib/types';
-import { getMinBaremaForPc } from '@/lib/baremas';
+import { getMinBaremaForPc, BAREMAS_LAST_UPDATED, BAREMAS_NEXT_UPDATE } from '@/lib/baremas';
 
 const GROEPERING_TOELICHTING =
   'Automatisch op basis van trefwoorden in functietitel (bijv. "admin", "sales", "it"). Criteria: vergelijkbare taken, verantwoordelijkheid en competentievereisten conform Art. 4 EU Richtlijn 2023/970.';
@@ -194,6 +194,9 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
           ))}
         </tbody>
       </table>
+      <p className="mt-3 text-xs text-white/25 italic px-1">
+        Barema&apos;s geldig per {new Date(BAREMAS_LAST_UPDATED).toLocaleDateString('nl-BE', { day: '2-digit', month: 'long', year: 'numeric' })}. Volgende update: {BAREMAS_NEXT_UPDATE}. Bron: Paritaire comités.
+      </p>
     </div>
   );
 }

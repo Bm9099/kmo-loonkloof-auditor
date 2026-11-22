@@ -15,9 +15,9 @@ const plans = [
   },
   {
     name: 'Starter',
-    price: '€79',
+    price: '€99',
     period: '/jaar',
-    sub: '≈ €7/maand',
+    sub: '€9/maand',
     recommended: false,
     features: ['Onbeperkte analyses', 'PDF compliance-rapport', 'Excel sjabloon download', 'Compliance score', 'Functiefamilie-analyse'],
     cta: 'Kies Starter',
@@ -26,15 +26,26 @@ const plans = [
   },
   {
     name: 'Professioneel',
-    price: '€149',
+    price: '€199',
     period: '/jaar',
-    sub: '≈ €13/maand',
+    sub: '€17/maand',
     recommended: true,
     apiKeyNotice: 'Vereist eigen OpenAI API-sleutel (gratis aan te maken op platform.openai.com)',
     features: ['Onbeperkte analyses', 'PDF compliance-rapport', 'Excel sjabloon download', 'AI vacatureteksten', 'Word-export', 'Eigen API-sleutel', 'Prioriteitsondersteuning'],
     cta: 'Kies Professioneel',
     href: null,
     stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? null,
+  },
+  {
+    name: 'Bureau',
+    price: '€599',
+    period: '/jaar',
+    sub: 'Voor accountants & HR-adviseurs',
+    recommended: false,
+    features: ['Alles in Professioneel', 'Meerdere klanten', 'Wit-label rapporten', 'Prioriteitsondersteuning', 'Dedicated onboarding'],
+    cta: 'Contacteer ons',
+    href: 'mailto:info@loonkloof.be',
+    stripePriceId: null,
   },
 ];
 
@@ -66,23 +77,28 @@ const faqs = [
 
 function StripeButton({ plan }: { plan: typeof plans[0] }) {
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  const isBureau = plan.name === 'Bureau';
+
+  if (plan.href) {
+    return (
+      <Link
+        href={plan.href}
+        className={`block w-full text-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+          isBureau
+            ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+            : 'border border-white/10 text-white hover:bg-white/5'
+        }`}
+      >
+        {plan.cta}
+      </Link>
+    );
+  }
 
   if (!publishableKey) {
     return (
       <div className="w-full text-center px-4 py-2.5 rounded-xl border border-yellow-500/30 bg-yellow-500/5 text-yellow-400 text-xs">
         Stripe configuratie vereist — zie .env.local.example
       </div>
-    );
-  }
-
-  if (plan.href) {
-    return (
-      <Link
-        href={plan.href}
-        className="block w-full text-center px-4 py-2.5 rounded-xl border border-white/10 text-white text-sm font-medium hover:bg-white/5 transition-colors"
-      >
-        {plan.cta}
-      </Link>
     );
   }
 
@@ -166,14 +182,24 @@ export default function PrijzenPage() {
 
       {/* Pricing Cards */}
       <div className="max-w-5xl mx-auto px-4 pb-20">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {plans.map((plan) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {plans.map((plan) => {
+            const isBureau = plan.name === 'Bureau';
+            return (
             <div
               key={plan.name}
               className="rounded-2xl border p-8 flex flex-col"
               style={{
-                background: plan.recommended ? 'rgba(13,148,136,0.08)' : 'rgba(255,255,255,0.03)',
-                borderColor: plan.recommended ? 'rgba(13,148,136,0.4)' : 'rgba(255,255,255,0.08)',
+                background: plan.recommended
+                  ? 'rgba(13,148,136,0.08)'
+                  : isBureau
+                    ? 'rgba(79,70,229,0.08)'
+                    : 'rgba(255,255,255,0.03)',
+                borderColor: plan.recommended
+                  ? 'rgba(13,148,136,0.4)'
+                  : isBureau
+                    ? 'rgba(79,70,229,0.4)'
+                    : 'rgba(255,255,255,0.08)',
               }}
             >
               <div className="flex items-start justify-between mb-6">
@@ -207,7 +233,7 @@ export default function PrijzenPage() {
               </ul>
               <StripeButton plan={plan} />
             </div>
-          ))}
+          );})}
         </div>
 
         {/* Enterprise */}

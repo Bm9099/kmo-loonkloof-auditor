@@ -2,6 +2,13 @@
 
 import { Check } from 'lucide-react';
 
+const DEADLINE = new Date('2027-06-07');
+
+function getDeadlineDays(): number {
+  const today = new Date();
+  return Math.ceil((DEADLINE.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+}
+
 const badges = [
   'EU-Richtlijn 2023/970 compliant',
   'Resultaten in 2 minuten',
@@ -35,10 +42,16 @@ export function HeroSection() {
         <span className="text-white block">Loontransparantie?</span>
       </h1>
 
-      <p className="text-slate-300 text-lg max-w-xl mb-10">
+      <p className="text-slate-300 text-lg max-w-xl mb-6">
         Upload uw geanonimiseerde loonlijst en ontvang direct een volledig loonkloofrapport met
         compliance score, functiefamilie-analyse en juridisch correcte vacatureteksten.
       </p>
+
+      <div className="mb-8">
+        <span className="inline-block rounded-full px-4 py-1.5 text-xs font-semibold text-amber-900 bg-amber-400 shadow-sm">
+          ⏳ Nog {getDeadlineDays()} dagen tot EU-deadline (100+ werknemers) — 7 juni 2027
+        </span>
+      </div>
 
       <div className="flex flex-wrap justify-center gap-3">
         {badges.map((text) => (

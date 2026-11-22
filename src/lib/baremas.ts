@@ -1,3 +1,16 @@
+export const BAREMAS_LAST_UPDATED = '2024-01-01';
+export const BAREMAS_NEXT_UPDATE = 'januari 2025';
+
+export const SECTOR_BENCHMARKS: Record<string, { gemiddeldeLoonkloof: number; sectorNaam: string }> = {
+  'PC 100': { gemiddeldeLoonkloof: 8.2, sectorNaam: 'Industrie (algemeen)' },
+  'PC 118': { gemiddeldeLoonkloof: 6.1, sectorNaam: 'Voedingsnijverheid' },
+  'PC 200': { gemiddeldeLoonkloof: 11.3, sectorNaam: 'Bedienden (algemeen)' },
+  'PC 218': { gemiddeldeLoonkloof: 4.8, sectorNaam: 'Bewaking' },
+  'PC 302': { gemiddeldeLoonkloof: 9.7, sectorNaam: 'Horeca' },
+  'PC 330': { gemiddeldeLoonkloof: 14.2, sectorNaam: 'Gezondheidszorg' },
+  'default': { gemiddeldeLoonkloof: 10.1, sectorNaam: 'Belgisch gemiddelde (Statbel 2023)' },
+};
+
 export interface BaremaEntry {
   pc: string;
   pcNaam: string;

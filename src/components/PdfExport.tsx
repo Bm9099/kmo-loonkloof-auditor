@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FileDown, ClipboardList } from 'lucide-react';
+import { FileDown, ClipboardList, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AnalysisResult } from '@/lib/types';
 
@@ -16,6 +16,7 @@ export function PdfExport({ result }: PdfExportProps) {
   const [bedrijfsnaam, setBedrijfsnaam] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState(false);
+  const [loadingOR, setLoadingOR] = useState(false);
 
   const naam = bedrijfsnaam.trim() || 'Uw Organisatie';
   const datum = new Date().toLocaleDateString('nl-BE', { day: '2-digit', month: 'long', year: 'numeric' });
@@ -387,6 +388,154 @@ export function PdfExport({ result }: PdfExportProps) {
     }
   };
 
+  const generateORRapport = async () => {
+    setLoadingOR(true);
+    try {
+      const { jsPDF } = await import('jspdf');
+      const { default: autoTable } = await import('jspdf-autotable');
+
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      // Header
+      doc.setFillColor(79, 70, 229);
+      doc.rect(0, 0, 210, 36, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Gezamenlijke loonevaluatie — Artikel 10 EU Richtlijn 2023/970', 14, 15);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${naam} · Opgesteld op ${datum}`, 14, 26);
+
+      doc.setTextColor(15, 23, 42);
+      let y = 50;
+
+      // Section 1
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('1. Samenvatting loonkloof per functiefamilie', 14, y);
+      y += 5;
+
+      const sec1Rows = result.functieGroepen.map((g) => [
+        g.naam,
+        g.status !== 'onvoldoende_data' ? `${g.loonkloof.toFixed(1)}%` : '—',
+        g.status === 'conform' ? 'Conform' : g.status === 'actie_vereist' ? 'Actie Vereist' : 'Onv. Data',
+      ]);
+
+      autoTable(doc, {
+        startY: y,
+        head: [['Functiefamilie', 'Loonkloof', 'Status']],
+        body: sec1Rows,
+        theme: 'grid',
+        headStyles: { fillColor: [79, 70, 229], textColor: 255, fontSize: 9 },
+        bodyStyles: { fontSize: 9 },
+        didParseCell: (data) => {
+          if (data.column.index === 2 && data.section === 'body') {
+            const val = String(data.cell.raw);
+            if (val === 'Actie Vereist') {
+              data.cell.styles.textColor = [220, 38, 38];
+              data.cell.styles.fontStyle = 'bold';
+            } else if (val === 'Conform') {
+              data.cell.styles.textColor = [5, 150, 105];
+            }
+          }
+        },
+        margin: { left: 14, right: 14 },
+      });
+
+      y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 12;
+
+      // Section 2
+      if (y > 240) { doc.addPage(); y = 20; }
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15, 23, 42);
+      doc.text('2. Verklaring van vastgestelde loonverschillen', 14, y);
+      y += 6;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      const verklaringText =
+        'De vastgestelde loonverschillen worden verklaard door de volgende objectieve factoren: anciënniteit, functieclassificatie, prestatie-evaluatie.';
+      doc.setFillColor(243, 244, 246);
+      const verklaringLines = doc.splitTextToSize(verklaringText, 178) as string[];
+      doc.roundedRect(14, y - 2, 182, verklaringLines.length * 5 + 8, 2, 2, 'F');
+      doc.text(verklaringLines, 18, y + 4);
+      y += verklaringLines.length * 5 + 14;
+
+      // Section 3
+      if (y > 240) { doc.addPage(); y = 20; }
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15, 23, 42);
+      doc.text('3. Voorgestelde maatregelen', 14, y);
+      y += 6;
+
+      const actieGroepen = result.functieGroepen.filter((g) => g.status === 'actie_vereist');
+      if (actieGroepen.length === 0) {
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(5, 150, 105);
+        doc.text('Geen functiefamilies vereisen actie.', 14, y);
+        y += 10;
+      } else {
+        for (const g of actieGroepen) {
+          if (y > 255) { doc.addPage(); y = 20; }
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(15, 23, 42);
+          doc.text(`${g.naam} (kloof: ${g.loonkloof.toFixed(1)}%)`, 17, y);
+          y += 5;
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(100, 116, 139);
+          doc.text('Maatregel: _______________________________________________', 17, y);
+          y += 8;
+        }
+      }
+
+      // Section 4
+      if (y > 220) { doc.addPage(); y = 20; }
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15, 23, 42);
+      doc.text('4. Handtekeningen', 14, y);
+      y += 8;
+
+      const sigRows = [
+        ['Werkgever', '', datum],
+        ['OR-voorzitter', '', ''],
+        ['Datum', datum, ''],
+      ];
+
+      autoTable(doc, {
+        startY: y,
+        head: [['Rol', 'Naam', 'Datum / Handtekening']],
+        body: sigRows,
+        theme: 'grid',
+        headStyles: { fillColor: [79, 70, 229], textColor: 255, fontSize: 9 },
+        bodyStyles: { fontSize: 9, minCellHeight: 14 },
+        margin: { left: 14, right: 14 },
+      });
+
+      // Footer
+      const pageHeight = doc.internal.pageSize.height;
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(100, 116, 139);
+      doc.text(
+        'Opgesteld conform EU Richtlijn 2023/970, Art. 10 | Vertrouwelijk — OR gebruik',
+        14,
+        pageHeight - 8,
+        { maxWidth: 182 },
+      );
+
+      doc.save(`or-rapport-art10-${naam.toLowerCase().replace(/\s+/g, '-')}-${datum.replace(/\s+/g, '-')}.pdf`);
+    } catch (err) {
+      console.error('OR PDF fout:', err);
+    } finally {
+      setLoadingOR(false);
+    }
+  };
+
   return (
     <div
       className="flex flex-wrap items-center gap-3 p-4 rounded-xl"
@@ -417,6 +566,16 @@ export function PdfExport({ result }: PdfExportProps) {
       >
         <ClipboardList className="w-4 h-4" />
         {loadingPlan ? 'Genereren…' : 'Download Actieplan'}
+      </Button>
+      <Button
+        variant="outline"
+        className="gap-2"
+        onClick={generateORRapport}
+        disabled={loadingOR}
+        style={{ borderColor: 'rgba(79,70,229,0.4)', background: 'rgba(79,70,229,0.08)', color: '#a5b4fc' }}
+      >
+        <Users className="w-4 h-4" />
+        {loadingOR ? 'Genereren…' : 'Download OR-Rapport (Art. 10)'}
       </Button>
     </div>
   );
