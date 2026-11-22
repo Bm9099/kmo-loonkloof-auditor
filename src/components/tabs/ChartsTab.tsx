@@ -31,7 +31,7 @@ interface TooltipEntry {
 function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: TooltipEntry[]; label?: unknown }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl shadow-lg px-4 py-3 text-sm" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)' }}>
+    <div className="rounded-xl shadow-lg px-4 py-3 text-sm" style={{ background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}>
       {label != null && <p className="font-semibold text-white mb-1.5">{String(label)}</p>}
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center gap-2 text-white/60">
@@ -56,7 +56,7 @@ function ScatterTooltip({ active, payload }: { active?: boolean; payload?: Toolt
   const d = payload[0]?.payload as { x: number; y: number; geslacht: 'M' | 'V' | 'X' };
   if (!d) return null;
   return (
-    <div className="rounded-xl shadow-lg px-4 py-3 text-sm" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)' }}>
+    <div className="rounded-xl shadow-lg px-4 py-3 text-sm" style={{ background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}>
       <p className="font-semibold text-white mb-1">{GENDER_LABELS[d.geslacht]}</p>
       <p className="text-white/60">
         <span className="font-medium">Anciënniteit:</span> {d.x} jaar

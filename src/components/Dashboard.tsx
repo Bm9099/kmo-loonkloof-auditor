@@ -60,7 +60,7 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
   const isProTab = TABS.find((t) => t.value === activeTab)?.pro ?? false;
 
   return (
-    <div className="bg-transparent min-h-screen">
+    <div className="min-h-screen">
       <div className="sticky top-0 z-10 backdrop-blur-md border-b" style={{ background: 'rgba(0,0,0,0.8)', borderColor: 'rgba(255,255,255,0.05)' }}>
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
@@ -98,7 +98,7 @@ export function Dashboard({ employees, onReset }: DashboardProps) {
       <div className="max-w-6xl mx-auto px-4 py-8 pb-16">
         <KpiCards result={result} />
 
-        <div className="rounded-2xl border overflow-hidden" style={{ background: '#111111', borderColor: 'rgba(255,255,255,0.08)' }}>
+        <div className="rounded-2xl border overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.08)' }}>
           <div className="flex gap-1 px-6 pt-4 overflow-x-auto" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             {TABS.map((tab) => (
               <button

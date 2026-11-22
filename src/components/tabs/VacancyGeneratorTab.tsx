@@ -165,7 +165,7 @@ export function VacancyGeneratorTab({ groups }: VacancyGeneratorTabProps) {
               <Info className="w-4 h-4" />
             </button>
             {showTooltip && (
-              <div className="absolute z-10 top-10 right-0 w-72 text-white text-xs rounded-lg p-3 shadow-lg leading-relaxed" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="absolute z-10 top-10 right-0 w-72 text-white text-xs rounded-lg p-3 shadow-lg leading-relaxed" style={{ background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <strong className="block mb-1">Groeperingslogica (Art. 4)</strong>
                 {GROEPERING_TOELICHTING}
               </div>
