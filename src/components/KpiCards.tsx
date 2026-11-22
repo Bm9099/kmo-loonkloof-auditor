@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingDown, AlertTriangle, Euro, Award } from 'lucide-react';
+import { TrendingDown, AlertTriangle, Euro, Award, ShieldAlert } from 'lucide-react';
 import { AnalysisResult } from '@/lib/types';
 
 interface KpiCardsProps {
@@ -8,7 +8,7 @@ interface KpiCardsProps {
 }
 
 export function KpiCards({ result }: KpiCardsProps) {
-  const { totaleGemiddeldeLoonkloof, aantalActieVereist, mediaanVerschilEuro, mediaanLoonkloof, complianceScore } = result;
+  const { totaleGemiddeldeLoonkloof, aantalActieVereist, mediaanVerschilEuro, mediaanLoonkloof, complianceScore, onderBarema } = result;
 
   const gapAbs = Math.abs(totaleGemiddeldeLoonkloof);
   const gapValueColor = gapAbs > 5 ? 'text-red-400' : 'text-teal-400';
@@ -50,10 +50,22 @@ export function KpiCards({ result }: KpiCardsProps) {
       sub: complianceScore >= 80 ? 'Goed' : complianceScore >= 60 ? 'Verbetering nodig' : 'Kritisch',
       indicator: null,
     },
+    {
+      icon: ShieldAlert,
+      label: 'Onder Barema',
+      value: `${onderBarema}`,
+      valueColor: onderBarema === 0 ? 'text-teal-400' : onderBarema <= 2 ? 'text-amber-400' : 'text-red-400',
+      sub: onderBarema === 0 ? 'conform sectorminima' : `medewerker${onderBarema !== 1 ? 's' : ''} onder PC-minimum`,
+      indicator: onderBarema === 0
+        ? <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-teal-500" />
+        : onderBarema <= 2
+          ? <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-amber-400" />
+          : <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-red-500" />,
+    },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       {cards.map((card) => {
         const Icon = card.icon;
         return (

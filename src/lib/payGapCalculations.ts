@@ -1,4 +1,5 @@
 import { Employee, FunctionGroup, AnalysisResult } from './types';
+import { BaremaEntry, BAREMAS, getMinBaremaForPc } from './baremas';
 
 const FUNCTION_FAMILIES: Record<string, string[]> = {
   'Admin & Secretariaat': ['admin', 'office', 'binnendienst', 'secretar', 'receptie', 'assistante'],
@@ -125,6 +126,18 @@ function buildFunctionGroup(naam: string, employees: Employee[]): FunctionGroup 
   };
 }
 
+export function checkBaremaCompliance(
+  employees: Employee[],
+  baremas: BaremaEntry[] = BAREMAS
+): Employee[] {
+  const pcSet = new Set(baremas.map((b) => b.pc));
+  return employees.filter((emp) => {
+    if (!pcSet.has(emp.paritair_comite)) return false;
+    const floor = getMinBaremaForPc(emp.paritair_comite);
+    return floor !== undefined && emp.bruto_maandloon_voltijds < floor;
+  });
+}
+
 export function calculateAnalysis(employees: Employee[], customGroups?: Record<string, string[]>): AnalysisResult {
   const functieGroepen = groupByFunctionFamily(employees, customGroups);
 
@@ -145,6 +158,8 @@ export function calculateAnalysis(employees: Employee[], customGroups?: Record<s
     100 - aantalActieVereist * 15 - (Math.abs(totaleGemiddeldeLoonkloof) > 5 ? 10 : 0)
   );
 
+  const onderBarema = checkBaremaCompliance(employees).length;
+
   return {
     totaleGemiddeldeLoonkloof,
     mediaanLoonkloof,
@@ -152,5 +167,6 @@ export function calculateAnalysis(employees: Employee[], customGroups?: Record<s
     complianceScore,
     aantalActieVereist,
     functieGroepen,
+    onderBarema,
   };
 }
