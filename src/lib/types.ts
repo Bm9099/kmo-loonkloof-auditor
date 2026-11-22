@@ -34,6 +34,7 @@ export interface AnalysisResult {
   complianceScore: number;
   aantalActieVereist: number;
   functieGroepen: FunctionGroup[];
+  onderBarema: number;
 }
 
 export interface RoleGrouping {

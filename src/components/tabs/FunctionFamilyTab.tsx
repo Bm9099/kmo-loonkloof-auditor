@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, AlertCircle, Info } from 'lucide-react';
 import { FunctionGroup } from '@/lib/types';
+import { getMinBaremaForPc } from '@/lib/baremas';
 
 const GROEPERING_TOELICHTING =
   'Automatisch op basis van trefwoorden in functietitel (bijv. "admin", "sales", "it"). Criteria: vergelijkbare taken, verantwoordelijkheid en competentievereisten conform Art. 4 EU Richtlijn 2023/970.';
@@ -34,7 +35,37 @@ function StatusBadge({ status }: { status: FunctionGroup['status'] }) {
 }
 
 function fmt(n: number) {
-  return `\u20ac${n.toLocaleString('nl-BE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  return `€${n.toLocaleString('nl-BE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+}
+
+function getGroupBaremaStatus(group: FunctionGroup): { floor: number; pc: string } | null {
+  const pcCounts: Record<string, number> = {};
+  for (const emp of group.employees) {
+    pcCounts[emp.paritair_comite] = (pcCounts[emp.paritair_comite] ?? 0) + 1;
+  }
+  const dominantPc = Object.entries(pcCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+  if (!dominantPc) return null;
+  const floor = getMinBaremaForPc(dominantPc);
+  if (floor === undefined) return null;
+  return { floor, pc: dominantPc };
+}
+
+function BaremaBadge({ group }: { group: FunctionGroup }) {
+  const info = getGroupBaremaStatus(group);
+  if (!info) {
+    return <span className="text-white/20 text-xs">—</span>;
+  }
+  const avg = group.employees.reduce((s, e) => s + e.bruto_maandloon_voltijds, 0) / group.employees.length;
+  const meets = avg >= info.floor;
+  return meets ? (
+    <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold bg-teal-900/50 text-teal-400 border border-teal-800 whitespace-nowrap">
+      ✓ {fmt(info.floor)}
+    </span>
+  ) : (
+    <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold bg-red-900/50 text-red-400 border border-red-800 whitespace-nowrap">
+      ✗ min {fmt(info.floor)}
+    </span>
+  );
 }
 
 export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
@@ -54,6 +85,7 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
             <th className="text-right py-3 px-3 text-xs font-semibold text-white/30 uppercase tracking-widest">Gem. Bruto V</th>
             <th className="text-right py-3 px-3 text-xs font-semibold text-white/30 uppercase tracking-widest">Kloof %</th>
             <th className="text-left py-3 px-3 text-xs font-semibold text-white/30 uppercase tracking-widest">Status</th>
+            <th className="text-left py-3 px-3 text-xs font-semibold text-white/30 uppercase tracking-widest">PC Barema</th>
           </tr>
         </thead>
         <tbody>
@@ -104,10 +136,13 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
                 <td className="py-3 px-3">
                   <StatusBadge status={g.status} />
                 </td>
+                <td className="py-3 px-3">
+                  <BaremaBadge group={g} />
+                </td>
               </tr>
               {expanded === g.naam && (
                 <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
-                  <td colSpan={8} className="px-6 py-4">
+                  <td colSpan={9} className="px-6 py-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                       <div>
                         <p className="font-semibold text-white/60 mb-1">Loonverdeling</p>
