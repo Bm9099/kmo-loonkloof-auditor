@@ -16,7 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className="min-h-full flex flex-col"
         style={{
-          background: 'linear-gradient(to bottom, #0F172A 0%, #0D2436 30%, #083344 60%, #042f2e 100%)',
+          backgroundImage: 'linear-gradient(to bottom, #0F172A 0%, #0D2436 30%, #083344 60%, #042f2e 100%)',
+          backgroundAttachment: 'fixed',
+          backgroundSize: 'cover',
           minHeight: '100vh',
         }}
       >
