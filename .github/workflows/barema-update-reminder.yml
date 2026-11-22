@@ -1,0 +1,42 @@
+name: Jaarlijkse barema-update herinnering
+
+on:
+  schedule:
+    - cron: '0 8 1 1 *'  # 1 januari om 09:00 CET (08:00 UTC)
+  workflow_dispatch:  # also allow manual trigger for testing
+
+jobs:
+  create-reminder-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Maak barema-update issue aan
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const year = new Date().getFullYear();
+
+            // Create labels if they don't exist
+            for (const label of [
+              { name: 'maintenance', color: 'e4e669', description: 'Maintenance tasks' },
+              { name: 'baremas', color: '0075ca', description: 'Barema-related updates' },
+            ]) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ...label,
+                });
+              } catch (e) {
+                if (e.status !== 422) throw e; // 422 = already exists
+              }
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🔔 Barema-update vereist — ${year}`,
+              body: `## Jaarlijkse barema-update\n\nDe sectorminima in \`src/lib/baremas.ts\` moeten bijgewerkt worden voor het jaar ${year}.\n\n### Te controleren paritaire comités\n\n| PC | Naam | Officiële bron |\n|-----|------|----------------|\n| PC 100 | Aanvullend nationaal paritair comité arbeiders | [Paritair comité 100](https://werk.belgie.be/nl/themas/collectieve-arbeidsrelaties/paritaire-comites/paritair-comite-voor-het-aanvullend-nationaal-paritair-comit-voor-de-arbeiderssector) |\n| PC 118 | Voedingsnijverheid | [Paritair comité 118](https://werk.belgie.be/nl/themas/collectieve-arbeidsrelaties/paritaire-comites/paritair-comite-voor-de-voedingsnijverheid) |\n| PC 200 | Bedienden | [Paritair comité 200](https://werk.belgie.be/nl/themas/collectieve-arbeidsrelaties/paritaire-comites/aanvullend-paritair-comite-voor-de-bedienden) |\n| PC 218 | Bewakingsondernemingen | [Paritair comité 218](https://werk.belgie.be/nl/themas/collectieve-arbeidsrelaties/paritaire-comites/paritair-comite-voor-de-bewakings-en-toezichtsdiensten) |\n| PC 302 | Horeca | [Paritair comité 302](https://werk.belgie.be/nl/themas/collectieve-arbeidsrelaties/paritaire-comites/paritair-comite-voor-het-hotelbedrijf) |\n| PC 330 | Gezondheidszorg | [Paritair comité 330](https://werk.belgie.be/nl/themas/collectieve-arbeidsrelaties/paritaire-comites/paritair-comite-voor-de-gezondheidsinrichtingen-en-diensten) |\n\n### Stappen\n1. Controleer de nieuwe minimumlonen via bovenstaande links\n2. Open \`src/lib/baremas.ts\`\n3. Pas de \`minBrutoMaand\` bedragen aan per categorie\n4. Verander \`BAREMAS_LAST_UPDATED\` naar \`${year}-01-01\`\n5. Verander \`BAREMAS_NEXT_UPDATE\` naar \`januari ${year + 1}\`\n6. Commit en push naar main\n\n### Referentie\nActuele loonindexering: [Centraal Economisch Raad](https://www.cec-ces.be) | [Statbel loonstatistieken](https://statbel.fgov.be/nl/themas/werk-en-opleiding/lonen-en-arbeidskosten)\n\n---\n*Automatisch aangemaakt door GitHub Actions — barema-update-reminder workflow*`,
+              labels: ['maintenance', 'baremas'],
+            });
