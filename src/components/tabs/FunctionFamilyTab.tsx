@@ -86,7 +86,7 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
                         <Info className="w-3.5 h-3.5" />
                       </button>
                       {tooltip === g.naam && (
-                        <div className="absolute z-20 left-6 top-0 w-64 text-white text-xs rounded-lg p-2.5 shadow-lg leading-relaxed" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <div className="absolute z-20 left-6 top-0 w-64 text-white text-xs rounded-lg p-2.5 shadow-lg leading-relaxed" style={{ background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}>
                           <strong className="block mb-1">Groeperingslogica (Art. 4)</strong>
                           {GROEPERING_TOELICHTING}
                         </div>
@@ -120,7 +120,7 @@ export function FunctionFamilyTab({ groups }: FunctionFamilyTabProps) {
                           Anciënniteitsverklaring
                           <span className="relative group cursor-pointer">
                             <Info className="w-3 h-3 text-white/30" />
-                            <span className="absolute z-20 left-5 top-0 w-56 text-white text-xs rounded p-2 hidden group-hover:block leading-relaxed" style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            <span className="absolute z-20 left-5 top-0 w-56 text-white text-xs rounded p-2 hidden group-hover:block leading-relaxed" style={{ background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}>
                               Berekend als: (verschil gemiddelde anciënniteit × €150/jaar) / absoluut loonverschil. €150/jaar is een indicatieve waarde per anciënniteitsjaar.
                             </span>
                           </span>

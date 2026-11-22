@@ -51,7 +51,7 @@ export function UploadZone({ onDataLoaded }: UploadZoneProps) {
   );
 
   return (
-    <div className="bg-transparent py-20 px-6">
+    <div className="py-20 px-6">
       <div className="max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold text-white text-center mb-2">Upload uw loondata</h2>
         <p className="text-white/50 text-center mb-10">Sleep uw Excel-bestand of kies een optie hieronder</p>

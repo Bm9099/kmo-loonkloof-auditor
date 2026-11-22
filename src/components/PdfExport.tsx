@@ -240,7 +240,7 @@ export function PdfExport({ result }: PdfExportProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-4 rounded-xl" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)' }}>
+    <div className="flex flex-wrap items-center gap-3 p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
       <input
         type="text"
         placeholder="Bedrijfsnaam (optioneel)"

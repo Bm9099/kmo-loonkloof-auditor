@@ -19,7 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           background: 'linear-gradient(to bottom, #0F172A 0%, #0D2436 30%, #083344 60%, #042f2e 100%)',
           minHeight: '100vh',
         }}
-      >{children}</body>
+      >
+        {children}
+      </body>
     </html>
   );
 }
