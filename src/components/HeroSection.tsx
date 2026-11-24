@@ -1,13 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
-
-const DEADLINE = new Date('2027-06-07');
-
-function getDeadlineDays(): number {
-  const today = new Date();
-  return Math.ceil((DEADLINE.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-}
 
 const badges = [
   'EU-Richtlijn 2023/970 compliant',
@@ -16,6 +10,14 @@ const badges = [
 ];
 
 export function HeroSection() {
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
+
+  useEffect(() => {
+    const deadline = new Date('2027-06-07');
+    const today = new Date();
+    setDaysLeft(Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+  }, []);
+
   return (
     <div
       className="min-h-[75vh] flex flex-col justify-center items-center text-center px-6 py-24"
@@ -47,11 +49,13 @@ export function HeroSection() {
         compliance score, functiefamilie-analyse en juridisch correcte vacatureteksten.
       </p>
 
-      <div className="mb-8">
-        <span className="inline-block rounded-full px-4 py-1.5 text-xs font-semibold text-amber-900 bg-amber-400 shadow-sm">
-          ⏳ Nog {getDeadlineDays()} dagen tot EU-deadline (100+ werknemers) — 7 juni 2027
-        </span>
-      </div>
+      {daysLeft !== null && (
+        <div className="mb-8">
+          <span className="inline-block rounded-full px-4 py-1.5 text-xs font-semibold text-amber-900 bg-amber-400 shadow-sm">
+            ⏳ Nog {daysLeft} dagen tot EU-deadline (100+ werknemers) — 7 juni 2027
+          </span>
+        </div>
+      )}
 
       <div className="flex flex-wrap justify-center gap-3">
         {badges.map((text) => (
